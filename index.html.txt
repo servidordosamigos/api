@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servidor dos Amigos - API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            transition: background 0.2s;
+        }
+        .btn-gerar {
+            background-color: #0070f3;
+            color: white;
+        }
+        .btn-gerar:hover {
+            background-color: #0051a2;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            resize: none;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .btn-copiar {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-copiar:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Painel da API</h2>
+        
+        <!-- Botão para gerar/chamar a API -->
+        <button class="btn-gerar" onclick="gerarTexto()">Gerar Resposta</button>
+
+        <!-- Caixa de texto onde o resultado vai aparecer -->
+        <textarea id="caixaResultado" placeholder="O resultado da API aparecerá aqui..." readonly></textarea>
+
+        <!-- Botão para copiar o conteúdo -->
+        <button class="btn-copiar" onclick="copiarTexto()">Copiar Texto</button>
+    </div>
+
+    <script>
+        async function gerarTexto() {
+            const caixa = document.getElementById('caixaResultado');
+            caixa.value = "A carregar...";
+
+            try {
+                // Faz o pedido para a sua API na Vercel
+                const resposta = await fetch('/api/mensagem', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ texto: 'gerar conteúdo' })
+                });
+
+                const dados = await resposta.json();
+                caixa.value = dados.resultado;
+            } catch (erro) {
+                caixa.value = "Erro ao comunicar com a API.";
+                console.error(erro);
+            }
+        }
+
+        function copiarTexto() {
+            const caixa = document.getElementById('caixaResultado');
+            
+            if (!caixa.value) return;
+
+            caixa.select();
+            caixa.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(caixa.value);
+
+            const botaoCopiar = event.target;
+            const textoOriginal = botaoCopiar.innerText;
+            botaoCopiar.innerText = "Copiado!";
+            botaoCopiar.style.backgroundColor = "#155724";
+
+            setTimeout(() => {
+                botaoCopiar.innerText = textoOriginal;
+                botaoCopiar.style.backgroundColor = "#28a745";
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
