@@ -1,23 +1,24 @@
 export default function handler(req, res) {
-    // Apenas aceita pedidos do tipo POST
+    // Permite que qualquer site (incluindo o Google Sites) aceda a esta API
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    // Se for um pedido de verificação do navegador, responde logo com sucesso
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     if (req.method !== 'POST') {
         return res.status(405).json({ erro: 'Apenas pedidos POST são permitidos' });
     }
 
-    // Pega o dado enviado pelo seu site
-    const { texto } = req.body;
+    const { texto } = req.body || {};
 
-    if (!texto) {
-        return res.status(400).json({ erro: 'Nenhum texto foi enviado.' });
-    }
+    const textoProcessado = texto ? texto.toUpperCase() : 'OLA MUNDO';
 
-    // Aqui você faz qualquer processamento que quiser na API
-    const textoProcessado = texto.toUpperCase(); // Exemplo: converte para maiúsculas
-
-    // Devolve a resposta em formato JSON para o seu site
     return res.status(200).json({ 
         sucesso: true,
-        recebido: texto,
         resultado: textoProcessado,
         mensagem: 'API a funcionar perfeitamente!'
     });
