@@ -1,0 +1,24 @@
+export default function handler(req, res) {
+    // Apenas aceita pedidos do tipo POST
+    if (req.method !== 'POST') {
+        return res.status(405).json({ erro: 'Apenas pedidos POST são permitidos' });
+    }
+
+    // Pega o dado enviado pelo seu site
+    const { texto } = req.body;
+
+    if (!texto) {
+        return res.status(400).json({ erro: 'Nenhum texto foi enviado.' });
+    }
+
+    // Aqui você faz qualquer processamento que quiser na API
+    const textoProcessado = texto.toUpperCase(); // Exemplo: converte para maiúsculas
+
+    // Devolve a resposta em formato JSON para o seu site
+    return res.status(200).json({ 
+        sucesso: true,
+        recebido: texto,
+        resultado: textoProcessado,
+        mensagem: 'API a funcionar perfeitamente!'
+    });
+}
